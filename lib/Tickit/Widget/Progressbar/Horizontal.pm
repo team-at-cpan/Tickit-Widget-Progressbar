@@ -1,7 +1,7 @@
-package Tickit::Widget::ProgressBar::Horizontal;
+package Tickit::Widget::Progressbar::Horizontal;
 use strict;
 use warnings FATAL => 'all';
-use parent qw(Tickit::Widget::ProgressBar);
+use parent qw(Tickit::Widget::Progressbar);
 use utf8;
 use POSIX qw(floor);
 
@@ -9,11 +9,11 @@ our $VERSION = '0.001';
 
 =head1 NAME
 
-Tickit::Widget::ProgressBar - simple progressbar implementation for Tickit
+Tickit::Widget::Progressbar - simple progressbar implementation for Tickit
 
 =head1 SYNOPSIS
 
- my $bar = Tickit::Widget::ProgressBar->new(
+ my $bar = Tickit::Widget::Progressbar->new(
  	completion	=> 0.00,
  );
 
@@ -63,7 +63,6 @@ sub chars {
 	return {
 		ascii	=> [qw(| X)],
 		boxchar	=> [
-		# qw(▏ ▎ ▍ ▌ ▋ ▊ ▉ █)]
 			"\x{258F}",
 			"\x{258E}",
 			"\x{258D}",

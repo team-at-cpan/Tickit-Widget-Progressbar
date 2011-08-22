@@ -1,4 +1,4 @@
-package Tickit::Widget::ProgressBar;
+package Tickit::Widget::Progressbar;
 # ABSTRACT: 
 use strict;
 use warnings FATAL => 'all';
@@ -9,11 +9,11 @@ our $VERSION = '0.001';
 
 =head1 NAME
 
-Tickit::Widget::ProgressBar - simple progressbar implementation for Tickit
+Tickit::Widget::Progressbar - simple progressbar implementation for Tickit
 
 =head1 SYNOPSIS
 
- my $bar = Tickit::Widget::ProgressBar->new(
+ my $bar = Tickit::Widget::Progressbar->new(
  	completion	=> 0.00,
  );
 
