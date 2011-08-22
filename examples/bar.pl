@@ -6,28 +6,28 @@ use IO::Async::Timer::Periodic;
 use Tickit::Async;
 use Tickit::Widget::VBox;
 use Tickit::Widget::HBox;
-use Tickit::Widget::ProgressBar::Horizontal;
-use Tickit::Widget::ProgressBar::Vertical;
+use Tickit::Widget::Progressbar::Horizontal;
+use Tickit::Widget::Progressbar::Vertical;
 use Tickit::Widget::Static;
 
 my $tickit = Tickit->new;
-my $top = Tickit::Widget::ProgressBar::Horizontal->new(
+my $top = Tickit::Widget::Progressbar::Horizontal->new(
 	completion	=> 0,
 	bg		=> 4,
 	fg		=> 2,
 );
-my $bottom = Tickit::Widget::ProgressBar::Horizontal->new(
+my $bottom = Tickit::Widget::Progressbar::Horizontal->new(
 	completion	=> 0,
 	direction	=> 1,
 	bg		=> 4,
 	fg		=> 2,
 );
-my $left = Tickit::Widget::ProgressBar::Vertical->new(
+my $left = Tickit::Widget::Progressbar::Vertical->new(
 	completion	=> 0,
 	bg		=> 4,
 	fg		=> 2,
 );
-my $right = Tickit::Widget::ProgressBar::Vertical->new(
+my $right = Tickit::Widget::Progressbar::Vertical->new(
 	completion	=> 0,
 	direction	=> 1,
 	bg		=> 4,
