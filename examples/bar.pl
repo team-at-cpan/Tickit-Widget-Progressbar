@@ -10,7 +10,7 @@ use Tickit::Widget::Progressbar::Horizontal;
 use Tickit::Widget::Progressbar::Vertical;
 use Tickit::Widget::Static;
 
-my $tickit = Tickit->new;
+my $tickit = Tickit::Async->new;
 my $top = Tickit::Widget::Progressbar::Horizontal->new(
 	completion	=> 0,
 	bg		=> 4,
