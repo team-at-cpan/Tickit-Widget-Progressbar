@@ -19,14 +19,7 @@ Tickit::Widget::Progressbar - simple progressbar implementation for Tickit
 
 =head1 METHODS
 
-
- [          ]
- [XXXXX     ]
-
 =cut
-
-#	Tickit::Window
-#	Tickit::Widget
 
 sub render {
 	my $self = shift;

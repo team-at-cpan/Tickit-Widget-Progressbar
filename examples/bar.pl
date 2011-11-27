@@ -48,7 +48,7 @@ $vbox->add($bottom);
 $hbox->add($vbox, expand => 1);
 $hbox->add($right);
 $tickit->set_root_widget($hbox);
-my $loop = IO::Async::Loop->new();
+my $loop = IO::Async::Loop->new;
 
 my $completion = 0.0;
 my $timer = IO::Async::Timer::Periodic->new(
