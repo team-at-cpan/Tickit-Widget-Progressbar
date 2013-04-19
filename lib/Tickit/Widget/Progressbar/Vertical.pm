@@ -36,7 +36,7 @@ sub render {
 	while($row < ($total_height - $h)) {
 		$win->goto($row++, 0);
 		if($self->direction) {
-			$win->print($chars->[-1] x $cols);
+			$win->print(' ' x $cols, bg => $win->pen->getattr('fg'));
 		} else {
 			$win->erasech($cols);
 		}
@@ -52,7 +52,7 @@ sub render {
 		if($self->direction) {
 			$win->erasech($cols);
 		} else {
-			$win->print($chars->[-1] x $cols);
+			$win->print(' ' x $cols, bg => $win->pen->getattr('fg'));
 		}
 	}
 }
