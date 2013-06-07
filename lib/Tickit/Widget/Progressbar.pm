@@ -19,6 +19,16 @@ Tickit::Widget::Progressbar - simple progressbar implementation for Tickit
  );
  $bar->completion($_ / 100.0) for 0..100;
 
+=head1 DESCRIPTION
+
+Provides support for a 'progress bar' widget. Use the L<Tickit::Widget::Progressbar::Horizontal>
+or L<Tickit::Widget::Progressbar::Vertical> subclasses depending on whether you want the progress
+bar to go from left to right or bottom to top.
+
+=cut
+
+use constant CLEAR_BEFORE_RENDER => 0;
+
 =head1 METHODS
 
 =cut

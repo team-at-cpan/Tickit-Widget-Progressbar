@@ -51,6 +51,17 @@ sub render {
 	}
 }
 
+=head2 chars
+
+Returns a list of chars for the various styles we support.
+
+Currently only handles 'ascii' and 'boxchar'.
+
+TODO - this should probably be aligned with the naming
+scheme used in other widgets?
+
+=cut
+
 sub chars {
 	my $self = shift;
 	return {
