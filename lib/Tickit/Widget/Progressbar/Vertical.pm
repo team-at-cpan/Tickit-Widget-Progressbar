@@ -5,11 +5,11 @@ use parent qw(Tickit::Widget::Progressbar);
 
 =head1 NAME
 
-Tickit::Widget::Progressbar - simple progressbar implementation for Tickit
+Tickit::Widget::Progressbar::Vertical - simple progressbar implementation for Tickit
 
 =head1 SYNOPSIS
 
- my $bar = Tickit::Widget::Progressbar->new(
+ my $bar = Tickit::Widget::Progressbar::Vertical->new(
  	completion	=> 0.00,
  );
 
