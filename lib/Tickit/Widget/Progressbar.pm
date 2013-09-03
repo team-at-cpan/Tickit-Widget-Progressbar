@@ -1,9 +1,8 @@
 package Tickit::Widget::Progressbar;
 # ABSTRACT: horizontal/vertical progress bars for Tickit
 use strict;
-use warnings FATAL => 'all';
+use warnings;
 use parent qw(Tickit::Widget);
-use utf8;
 
 our $VERSION = '0.002';
 
@@ -84,8 +83,13 @@ to set completion and re-render.
 sub completion {
 	my $self = shift;
 	if(@_) {
+		my $previous = $self->{completion};
 		$self->{completion} = shift;
-		$self->redraw;
+		if(defined $previous) {
+			$self->expose_between_values($previous, $self->{completion});
+		} else {
+			$self->redraw;
+		}
 		return $self;
 	}
 	return $self->{completion};
@@ -105,5 +109,5 @@ Tom Molesworth <cpan@entitymodel.com>
 
 =head1 LICENSE
 
-Copyright Tom Molesworth 2011. Licensed under the same terms as Perl itself.
+Copyright Tom Molesworth 2011-2013. Licensed under the same terms as Perl itself.
 

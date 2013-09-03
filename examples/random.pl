@@ -1,3 +1,4 @@
+
 #!/usr/bin/env perl
 use strict;
 use warnings;
@@ -47,7 +48,7 @@ my $timer = IO::Async::Timer::Periodic->new(
 	interval => 0.1,
 
 	on_tick => sub {
-		$_->completion($completion += 0.0002) for @bars;
+		$_->completion(rand) for @bars;
 		$loop->later(sub { $loop->loop_stop }) if $completion >= 1.00;
 	},
 );

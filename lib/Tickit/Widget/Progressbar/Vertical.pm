@@ -1,11 +1,7 @@
 package Tickit::Widget::Progressbar::Vertical;
 use strict;
-use warnings FATAL => 'all';
+use warnings;
 use parent qw(Tickit::Widget::Progressbar);
-use utf8;
-use POSIX qw(floor);
-
-our $VERSION = '0.001';
 
 =head1 NAME
 
@@ -17,14 +13,33 @@ Tickit::Widget::Progressbar - simple progressbar implementation for Tickit
  	completion	=> 0.00,
  );
 
+=cut
+
+use POSIX qw(floor);
+use List::Util qw(min);
+use Tickit::Style;
+
+use constant CLEAR_BEFORE_RENDER => 0;
+use constant WIDGET_PEN_FROM_STYLE => 0;
+use constant CAN_FOCUS => 0;
+
+BEGIN {
+	style_definition base =>
+		fg => 'white',
+		bg => 'black',
+		incomplete_fg => 'black',
+		incomplete_bg => 'white';
+}
+
 =head1 METHODS
 
 =cut
 
-sub render {
-	my $self = shift;
+sub render_to_rb {
+	my ($self, $rb, $rect) = @_;
 	my $win = $self->window or return;
 
+	$rb->clear;
 	my $total_height = $win->lines - 1;
 	my $cols = $win->cols;
 	my $chars = $self->chars;
@@ -33,26 +48,27 @@ sub render {
 	my $complete = $self->completion * $total_height;
 	my $h = floor($complete);
 
+	my $fg = $self->get_style_pen;
+	my $bg = $self->get_style_pen('incomplete');
 	while($row < ($total_height - $h)) {
-		$win->goto($row++, 0);
+		$rb->goto($row++, 0);
 		if($self->direction) {
-			$win->print(' ' x $cols, bg => $win->pen->getattr('fg'));
+			$rb->text(' ' x $cols, $bg);
 		} else {
-			$win->erasech($cols);
+			$rb->erase($cols, $fg);
 		}
 	}
 
 	if(my $partial = ($complete - $h) * @$chars) {
-		$win->goto($row++, 0);
-		$win->print($chars->[$partial] x $cols, $self->direction ? (fg => 4, bg => 2) : ());
+		$rb->char_at($row++, $_, $chars->[$partial], $self->direction ? $bg : $fg) for 0..$cols - 1;
 	}
 
 	while($row <= $total_height) {
-		$win->goto($row++, 0);
+		$rb->goto($row++, 0);
 		if($self->direction) {
-			$win->erasech($cols);
+			$rb->erase($cols, $fg);
 		} else {
-			$win->print(' ' x $cols, bg => $win->pen->getattr('fg'));
+			$rb->text(' ' x $cols, $bg);
 		}
 	}
 }
@@ -71,18 +87,38 @@ scheme used in other widgets?
 sub chars {
 	my $self = shift;
 	return {
-		ascii	=> [qw(_ x X)],
+		ascii	=> [map ord, qw(_ x X)],
 		boxchar	=> [
-			"\x{2581}",
-			"\x{2582}",
-			"\x{2583}",
-			"\x{2584}",
-			"\x{2585}",
-			"\x{2586}",
-			"\x{2587}",
-			"\x{2588}"
+			0x2581,
+			0x2582,
+			0x2583,
+			0x2584,
+			0x2585,
+			0x2586,
+			0x2587,
+			0x2588
 		],
 	}->{$self->style};
+}
+
+sub position_for {
+	my $self = shift;
+	return $self->window->lines - floor(shift() * $self->window->lines);
+}
+
+sub expose_between_values {
+	my $self = shift;
+	return $self unless $self->window;
+
+	my ($prev, $next) = map $self->position_for($_), @_;
+	$self->window->expose(
+		Tickit::Rect->new(
+			top  => min($prev, $next) - 1,
+			left => 0,
+			cols => $self->window->cols,
+			lines => abs($next - $prev) + 1,
+		)
+	);
 }
 
 1;
@@ -91,11 +127,17 @@ __END__
 
 =head1 SEE ALSO
 
+=over 4
+
+=item * L<Tickit::Widget::SparkLine>
+
+=back
+
 =head1 AUTHOR
 
 Tom Molesworth <cpan@entitymodel.com>
 
 =head1 LICENSE
 
-Copyright Tom Molesworth 2011. Licensed under the same terms as Perl itself.
+Copyright Tom Molesworth 2011-2013. Licensed under the same terms as Perl itself.
 
