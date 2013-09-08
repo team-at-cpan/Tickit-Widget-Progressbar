@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.100     2013-09-08 19:21:20 Europe/London
 	Features:
 	* Switched to Tickit::RenderBuffer
 	* Helper method to expose only the areas that need drawing
