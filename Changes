@@ -1,6 +1,15 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+	Features:
+	* Switched to Tickit::RenderBuffer
+	* Helper method to expose only the areas that need drawing
+	(currently disabled pending tests to prove that it's doing
+	the right thing)
+	* Style support
+	* Initial support for gradients, currently disabled since
+	it would require the Tickit::Colour mapping code which is
+	not yet on CPAN.
 
 0.002     2011-12-04 22:30:31 Europe/London
 	Fix abstract, update documentation

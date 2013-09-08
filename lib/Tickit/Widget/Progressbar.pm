@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use parent qw(Tickit::Widget);
 
-our $VERSION = '0.002';
+our $VERSION = '0.100';
 
 =head1 NAME
 
@@ -26,7 +26,19 @@ bar to go from left to right or bottom to top.
 
 =cut
 
+use Tickit::Style;
+
 use constant CLEAR_BEFORE_RENDER => 0;
+use constant WIDGET_PEN_FROM_STYLE => 0;
+use constant CAN_FOCUS => 0;
+
+BEGIN {
+	style_definition base =>
+		fg => 255,
+		bg => 'black',
+		gradient => 0,
+		start_fg => 232;
+}
 
 =head1 METHODS
 
@@ -86,13 +98,34 @@ sub completion {
 		my $previous = $self->{completion};
 		$self->{completion} = shift;
 		if(defined $previous) {
-			$self->expose_between_values($previous, $self->{completion});
+			# Not entirely sure this part is working reliably enough yet
+#			$self->expose_between_values($previous, $self->{completion});
+			$self->redraw;
 		} else {
 			$self->redraw;
 		}
 		return $self;
 	}
 	return $self->{completion};
+}
+
+sub pen_for_position {
+	my $self = shift;
+	my %args = @_;
+	$self->{gradient_pen} ||= {};
+	$self->{gradient_pen}{join ',', map { $_ => $args{$_} } sort keys %args} ||= do {
+		my @start = Tickit::Colour->colour_to_rgb($args{start}->getattr($args{from}));
+		my @end = Tickit::Colour->colour_to_rgb($args{end}->getattr($args{from}));
+		my $col = Tickit::Colour->rgb_to_colour(map {
+				($start[$_] * $args{pos} + $end[$_] * ($args{total} - $args{pos})) / $args{total}
+			} 0..2);
+		my %extra = map {; /^extra_(.*)$/ ? ($1 => $args{$_}) : () } keys %args;
+
+		Tickit::Pen::Immutable->new(
+			($args{to} || $args{from}) => $col,
+			%extra,
+		);
+	};
 }
 
 1;

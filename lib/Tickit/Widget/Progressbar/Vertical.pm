@@ -13,34 +13,121 @@ Tickit::Widget::Progressbar::Vertical - simple progressbar implementation for Ti
  	completion	=> 0.00,
  );
 
+=head1 DESCRIPTION
+
+See L<Tickit::Widget::Progressbar>.
+
 =cut
 
 use POSIX qw(floor);
 use List::Util qw(min);
-use Tickit::Style;
 
-use constant CLEAR_BEFORE_RENDER => 0;
-use constant WIDGET_PEN_FROM_STYLE => 0;
-use constant CAN_FOCUS => 0;
-
-BEGIN {
-	style_definition base =>
-		fg => 'white',
-		bg => 'black',
-		incomplete_fg => 'black',
-		incomplete_bg => 'white';
-}
+# Undocumented feature for gradient support. Needs Tickit::Colour,
+# since that's not on CPAN then there's little point in enabling this.
+use constant ENABLE_GRADIENT => 0;
 
 =head1 METHODS
 
 =cut
 
 sub render_to_rb {
+	my $self = shift;
+	return $self->render_gradient(@_) if ENABLE_GRADIENT && scalar $self->get_style_values('gradient');
+	return $self->render_normal(@_);
+}
+
+sub render_gradient {
 	my ($self, $rb, $rect) = @_;
 	my $win = $self->window or return;
 
 	$rb->clear;
-	my $total_height = $win->lines - 1;
+	my $total_height = $win->lines;
+	my $cols = $win->cols;
+	my $chars = $self->chars;
+	my $row = 0;
+
+	my $complete = $self->completion * $total_height;
+	my $h = floor($complete);
+
+	my $start = $self->get_style_pen('start');
+	my $src = $self->get_style_pen;
+	my $dst = Tickit::Pen->new(
+		fg => $src->getattr('bg'),
+		bg => $src->getattr('fg')
+	)->default_from($src);
+	my $fg = $src;
+	my $bg = $dst;
+	while($row < ($total_height - $h)) {
+		$rb->goto($row++, 0);
+		if($self->direction) {
+#			$bg = $self->pen_for_position($row, $total_height, bg => $src, $dst);
+			$bg = $self->pen_for_position(
+				pos => $total_height - $row,
+				total => $total_height,
+				from => 'fg',
+				to => 'bg',
+				start => $start,
+				end => $src
+			);
+			$rb->erase($cols, $bg);
+		} else {
+#			$fg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
+			$rb->erase($cols, $fg);
+		}
+	}
+
+	if(my $partial = ($complete - $h) * @$chars) {
+		if($self->direction) {
+			$fg = $self->pen_for_position(
+				pos      => $total_height - $row,
+				total    => $total_height,
+				from     => 'fg',
+				to       => 'bg',
+				start    => $start,
+				end      => $src,
+				extra_fg => $dst->getattr('fg'),
+			);
+		} else {
+			$fg = $self->pen_for_position(
+				pos => $row,
+				total => $total_height,
+				from => 'fg',
+				start => $start,
+				end => $src
+			);
+		}
+#		$bg = $self->pen_for_position($row, $total_height, bg => $src, $dst);
+		$rb->char_at($row++, $_, $chars->[$partial], $fg) for 0..$cols - 1;
+	}
+
+	while($row <= $total_height) {
+		$rb->goto($row, 0);
+		if($self->direction) {
+#			$fg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
+			$rb->erase($cols, $src);
+		} else {
+			$fg = $self->pen_for_position(
+				pos => $row,
+				total => $total_height,
+				from => 'fg',
+				to => 'bg',
+				start => $start,
+				end => $src
+			);
+#			$bg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
+#			$fg = $self->pen_for_position($row, $total_height, bg => $src, $start);
+			$rb->erase($cols, $fg);
+		}
+		++$row;
+	}
+}
+
+sub render_normal {
+	my ($self, $rb, $rect) = @_;
+	my $win = $self->window or return;
+
+	$rb->clear;
+	my $total_height = $win->lines;
 	my $cols = $win->cols;
 	my $chars = $self->chars;
 	my $row = 0;
@@ -49,7 +136,10 @@ sub render_to_rb {
 	my $h = floor($complete);
 
 	my $fg = $self->get_style_pen;
-	my $bg = $self->get_style_pen('incomplete');
+	my $bg = Tickit::Pen->new(
+		fg => $fg->getattr('bg'),
+		bg => $fg->getattr('fg')
+	)->default_from($fg);
 	while($row < ($total_height - $h)) {
 		$rb->goto($row++, 0);
 		if($self->direction) {

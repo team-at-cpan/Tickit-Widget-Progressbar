@@ -23,7 +23,8 @@ $vbox->add($bottom);
 $tickit->set_root_widget($vbox);
 my $completion = 0.0;
 my $code; $code = sub { 
-	$_->completion($completion += 0.0010) for $top, $bottom;
+	$completion += 0.0010;
+	$_->completion($completion) for $top, $bottom;
 	return if $completion >= 1.00;
 	$tickit->timer(after => 0.05 => $code);
 };

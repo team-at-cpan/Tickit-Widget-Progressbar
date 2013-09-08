@@ -29,7 +29,7 @@ $hbox->add($right);
 $tickit->set_root_widget($hbox);
 my $completion = 0.0;
 my $code; $code = sub { 
-	$_->completion($completion += 0.0005) for $left, $right;
+	$_->completion($completion += 0.0015) for $left, $right;
 	return if $completion >= 1.00;
 	$tickit->timer(after => 0.05 => $code);
 };
