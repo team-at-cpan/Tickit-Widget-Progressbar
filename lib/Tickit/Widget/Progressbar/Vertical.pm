@@ -1,4 +1,5 @@
 package Tickit::Widget::Progressbar::Vertical;
+
 use strict;
 use warnings;
 use parent qw(Tickit::Widget::Progressbar);
