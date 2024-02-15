@@ -4,6 +4,9 @@ use strict;
 use warnings;
 use parent qw(Tickit::Widget::Progressbar);
 
+# VERSION
+# AUTHORITY
+
 =head1 NAME
 
 Tickit::Widget::Progressbar::Vertical - simple progressbar implementation for Tickit
