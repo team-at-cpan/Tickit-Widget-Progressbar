@@ -11,7 +11,7 @@ Tickit::Widget::Progressbar::Vertical - simple progressbar implementation for Ti
 =head1 SYNOPSIS
 
  my $bar = Tickit::Widget::Progressbar::Vertical->new(
- 	completion	=> 0.00,
+    completion  => 0.00,
  );
 
 =head1 DESCRIPTION
@@ -32,136 +32,136 @@ use constant ENABLE_GRADIENT => 0;
 =cut
 
 sub render_to_rb {
-	my $self = shift;
-	return $self->render_gradient(@_) if ENABLE_GRADIENT && scalar $self->get_style_values('gradient');
-	return $self->render_normal(@_);
+    my $self = shift;
+    return $self->render_gradient(@_) if ENABLE_GRADIENT && scalar $self->get_style_values('gradient');
+    return $self->render_normal(@_);
 }
 
 sub render_gradient {
-	my ($self, $rb, $rect) = @_;
-	my $win = $self->window or return;
+    my ($self, $rb, $rect) = @_;
+    my $win = $self->window or return;
 
-	$rb->clear;
-	my $total_height = $win->lines;
-	my $cols = $win->cols;
-	my $chars = $self->chars;
-	my $row = 0;
+    $rb->clear;
+    my $total_height = $win->lines;
+    my $cols = $win->cols;
+    my $chars = $self->chars;
+    my $row = 0;
 
-	my $complete = $self->completion * $total_height;
-	my $h = floor($complete);
+    my $complete = $self->completion * $total_height;
+    my $h = floor($complete);
 
-	my $start = $self->get_style_pen('start');
-	my $src = $self->get_style_pen;
-	my $dst = Tickit::Pen->new(
-		fg => $src->getattr('bg'),
-		bg => $src->getattr('fg')
-	)->default_from($src);
-	my $fg = $src;
-	my $bg = $dst;
-	while($row < ($total_height - $h)) {
-		$rb->goto($row++, 0);
-		if($self->direction) {
-#			$bg = $self->pen_for_position($row, $total_height, bg => $src, $dst);
-			$bg = $self->pen_for_position(
-				pos => $total_height - $row,
-				total => $total_height,
-				from => 'fg',
-				to => 'bg',
-				start => $start,
-				end => $src
-			);
-			$rb->erase($cols, $bg);
-		} else {
-#			$fg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
-			$rb->erase($cols, $fg);
-		}
-	}
+    my $start = $self->get_style_pen('start');
+    my $src = $self->get_style_pen;
+    my $dst = Tickit::Pen->new(
+        fg => $src->getattr('bg'),
+        bg => $src->getattr('fg')
+    )->default_from($src);
+    my $fg = $src;
+    my $bg = $dst;
+    while($row < ($total_height - $h)) {
+        $rb->goto($row++, 0);
+        if($self->direction) {
+#           $bg = $self->pen_for_position($row, $total_height, bg => $src, $dst);
+            $bg = $self->pen_for_position(
+                pos => $total_height - $row,
+                total => $total_height,
+                from => 'fg',
+                to => 'bg',
+                start => $start,
+                end => $src
+            );
+            $rb->erase($cols, $bg);
+        } else {
+#           $fg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
+            $rb->erase($cols, $fg);
+        }
+    }
 
-	if(my $partial = ($complete - $h) * @$chars) {
-		if($self->direction) {
-			$fg = $self->pen_for_position(
-				pos      => $total_height - $row,
-				total    => $total_height,
-				from     => 'fg',
-				to       => 'bg',
-				start    => $start,
-				end      => $src,
-				extra_fg => $dst->getattr('fg'),
-			);
-		} else {
-			$fg = $self->pen_for_position(
-				pos => $row,
-				total => $total_height,
-				from => 'fg',
-				start => $start,
-				end => $src
-			);
-		}
-#		$bg = $self->pen_for_position($row, $total_height, bg => $src, $dst);
-		$rb->char_at($row++, $_, $chars->[$partial], $fg) for 0..$cols - 1;
-	}
+    if(my $partial = ($complete - $h) * @$chars) {
+        if($self->direction) {
+            $fg = $self->pen_for_position(
+                pos      => $total_height - $row,
+                total    => $total_height,
+                from     => 'fg',
+                to       => 'bg',
+                start    => $start,
+                end      => $src,
+                extra_fg => $dst->getattr('fg'),
+            );
+        } else {
+            $fg = $self->pen_for_position(
+                pos => $row,
+                total => $total_height,
+                from => 'fg',
+                start => $start,
+                end => $src
+            );
+        }
+#       $bg = $self->pen_for_position($row, $total_height, bg => $src, $dst);
+        $rb->char_at($row++, $_, $chars->[$partial], $fg) for 0..$cols - 1;
+    }
 
-	while($row <= $total_height) {
-		$rb->goto($row, 0);
-		if($self->direction) {
-#			$fg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
-			$rb->erase($cols, $src);
-		} else {
-			$fg = $self->pen_for_position(
-				pos => $row,
-				total => $total_height,
-				from => 'fg',
-				to => 'bg',
-				start => $start,
-				end => $src
-			);
-#			$bg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
-#			$fg = $self->pen_for_position($row, $total_height, bg => $src, $start);
-			$rb->erase($cols, $fg);
-		}
-		++$row;
-	}
+    while($row <= $total_height) {
+        $rb->goto($row, 0);
+        if($self->direction) {
+#           $fg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
+            $rb->erase($cols, $src);
+        } else {
+            $fg = $self->pen_for_position(
+                pos => $row,
+                total => $total_height,
+                from => 'fg',
+                to => 'bg',
+                start => $start,
+                end => $src
+            );
+#           $bg = $self->pen_for_position($row, $total_height, fg => $src, $dst);
+#           $fg = $self->pen_for_position($row, $total_height, bg => $src, $start);
+            $rb->erase($cols, $fg);
+        }
+        ++$row;
+    }
 }
 
 sub render_normal {
-	my ($self, $rb, $rect) = @_;
-	my $win = $self->window or return;
+    my ($self, $rb, $rect) = @_;
+    my $win = $self->window or return;
 
-	$rb->clear;
-	my $total_height = $win->lines;
-	my $cols = $win->cols;
-	my $chars = $self->chars;
-	my $row = 0;
+    $rb->clear;
+    my $total_height = $win->lines;
+    my $cols = $win->cols;
+    my $chars = $self->chars;
+    my $row = 0;
 
-	my $complete = $self->completion * $total_height;
-	my $h = floor($complete);
+    my $complete = $self->completion * $total_height;
+    my $h = floor($complete);
 
-	my $fg = $self->get_style_pen;
-	my $bg = Tickit::Pen->new(
-		fg => $fg->getattr('bg'),
-		bg => $fg->getattr('fg')
-	)->default_from($fg);
-	while($row < ($total_height - $h)) {
-		$rb->goto($row++, 0);
-		if($self->direction) {
-			$rb->text(' ' x $cols, $bg);
-		} else {
-			$rb->erase($cols, $fg);
-		}
-	}
+    my $fg = $self->get_style_pen;
+    my $bg = Tickit::Pen->new(
+        fg => $fg->getattr('bg'),
+        bg => $fg->getattr('fg')
+    )->default_from($fg);
+    while($row < ($total_height - $h)) {
+        $rb->goto($row++, 0);
+        if($self->direction) {
+            $rb->text(' ' x $cols, $bg);
+        } else {
+            $rb->erase($cols, $fg);
+        }
+    }
 
-	if(my $partial = ($complete - $h) * @$chars) {
-		$rb->char_at($row++, $_, $chars->[$partial], $self->direction ? $bg : $fg) for 0..$cols - 1;
-	}
+    if(my $partial = ($complete - $h) * @$chars) {
+        $rb->char_at($row++, $_, $chars->[$partial], $self->direction ? $bg : $fg) for 0..$cols - 1;
+    }
 
-	while($row <= $total_height) {
-		$rb->goto($row++, 0);
-		if($self->direction) {
-			$rb->erase($cols, $fg);
-		} else {
-			$rb->text(' ' x $cols, $bg);
-		}
-	}
+    while($row <= $total_height) {
+        $rb->goto($row++, 0);
+        if($self->direction) {
+            $rb->erase($cols, $fg);
+        } else {
+            $rb->text(' ' x $cols, $bg);
+        }
+    }
 }
 
 =head2 chars
@@ -176,40 +176,40 @@ scheme used in other widgets?
 =cut
 
 sub chars {
-	my $self = shift;
-	return {
-		ascii	=> [map ord, qw(_ x X)],
-		boxchar	=> [
-			0x2581,
-			0x2582,
-			0x2583,
-			0x2584,
-			0x2585,
-			0x2586,
-			0x2587,
-			0x2588
-		],
-	}->{$self->style};
+    my $self = shift;
+    return {
+        ascii   => [map ord, qw(_ x X)],
+        boxchar => [
+            0x2581,
+            0x2582,
+            0x2583,
+            0x2584,
+            0x2585,
+            0x2586,
+            0x2587,
+            0x2588
+        ],
+    }->{$self->style};
 }
 
 sub position_for {
-	my $self = shift;
-	return $self->window->lines - floor(shift() * $self->window->lines);
+    my $self = shift;
+    return $self->window->lines - floor(shift() * $self->window->lines);
 }
 
 sub expose_between_values {
-	my $self = shift;
-	return $self unless $self->window;
+    my $self = shift;
+    return $self unless $self->window;
 
-	my ($prev, $next) = map $self->position_for($_), @_;
-	$self->window->expose(
-		Tickit::Rect->new(
-			top  => min($prev, $next) - 1,
-			left => 0,
-			cols => $self->window->cols,
-			lines => abs($next - $prev) + 1,
-		)
-	);
+    my ($prev, $next) = map $self->position_for($_), @_;
+    $self->window->expose(
+        Tickit::Rect->new(
+            top  => min($prev, $next) - 1,
+            left => 0,
+            cols => $self->window->cols,
+            lines => abs($next - $prev) + 1,
+        )
+    );
 }
 
 1;
